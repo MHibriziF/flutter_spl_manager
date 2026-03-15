@@ -1,0 +1,14 @@
+{
+  "roots": [
+    "flutter_spl_manager"
+  ],
+  "packages": [
+    {
+      "name": "flutter_spl_manager",
+      "version": "0.1.0",
+      "dependencies": [],
+      "devDependencies": []
+    }
+  ],
+  "configVersion": 1
+}

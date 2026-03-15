@@ -1,0 +1,19 @@
+name: flutter_spl_manager
+description: >-
+  CLI tool for managing features, storage backends, and state management
+  in Flutter Clean Architecture projects (SPL engineering).
+version: 0.1.0
+repository: https://github.com/MHibriziF/flutter_spl_manager
+issue_tracker: https://github.com/MHibriziF/flutter_spl_manager/issues
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+
+executables:
+  spl: spl
+
+topics:
+  - flutter
+  - cli
+  - code-generation
+  - clean-architecture
