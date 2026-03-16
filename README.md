@@ -385,21 +385,32 @@ features:
 
 The CLI uses [Mason](https://pub.dev/packages/mason_cli) for code generation if available, and falls back to its own inline templates automatically. No setup required to use the CLI — Mason is purely an optional enhancement.
 
-To set up Mason bricks in your project:
+### Why use `--with-mason`?
+
+- **Full template control** — the brick source files are copied directly into your project's `bricks/` directory. Edit any template to match your team's conventions: rename files, change imports, add boilerplate, adjust the generated folder structure.
+- **Consistent across the team** — once you commit `bricks/`, everyone on the team generates code from the same customised templates.
+- **Automatic** — `spl add` and `spl storage add` detect Mason and use the bricks automatically. No extra steps per feature.
+
+Without `--with-mason`, the CLI falls back to its own built-in inline templates — no Mason required.
+
+### Setup
 
 ```bash
 # Install mason_cli if you haven't already
 dart pub global activate mason_cli
 
-# Bootstrap Mason with all SPL bricks (run alongside spl init, or separately)
+# Bootstrap Mason — copies bricks into your project and sets up mason.yaml
 spl init --with-mason
 ```
 
-This creates a `mason.yaml` referencing all SPL bricks from this repo's GitHub, then runs `mason get` to resolve them. After that, `spl add` and `spl storage add` will use Mason bricks automatically.
+This will:
+1. Copy all SPL brick templates into `bricks/` in your project root
+2. Create `mason.yaml` with local `path:` references to those bricks
+3. Run `mason get` to register them
 
-If you want to customise a brick, point its entry in `mason.yaml` to a local path instead of the git URL, then run `mason get` again.
+After that, `spl add` and `spl storage add` will use your local bricks automatically. To customise a template, edit the files under `bricks/<brick-name>/__brick__/` and commit the changes.
 
-Brick templates live in `bricks/` and are excluded from Dart analysis because they contain Mustache syntax (`{{name.pascalCase()}}`), not valid Dart.
+Brick templates use Mustache syntax (`{{name.pascalCase()}}`) — they are excluded from Dart analysis automatically by `spl init`.
 
 ---
 

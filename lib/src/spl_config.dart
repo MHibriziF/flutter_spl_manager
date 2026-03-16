@@ -175,35 +175,73 @@ Future<bool> _checkMason() async {
 
 // ─── Mason init ───────────────────────────────────────────────────────────────
 
-const _repoUrl = 'https://github.com/MHibriziF/flutter_spl_manager';
-
-const _masonYaml = '''
+const _masonYamlLocal = '''
 bricks:
   feature:
-    git:
-      url: $_repoUrl
-      path: bricks/feature
+    path: bricks/feature
   storage_hive:
-    git:
-      url: $_repoUrl
-      path: bricks/storage_hive
+    path: bricks/storage_hive
   storage_prefs:
-    git:
-      url: $_repoUrl
-      path: bricks/storage_prefs
-  storage_secure:
-    git:
-      url: $_repoUrl
-      path: bricks/storage_secure
-  storage_sqflite:
-    git:
-      url: $_repoUrl
-      path: bricks/storage_sqflite
+    path: bricks/storage_prefs
   storage_prefs_with_cache:
-    git:
-      url: $_repoUrl
-      path: bricks/storage_prefs_with_cache
+    path: bricks/storage_prefs_with_cache
+  storage_secure:
+    path: bricks/storage_secure
+  storage_sqflite:
+    path: bricks/storage_sqflite
 ''';
+
+/// Locates the `bricks/` directory bundled with this CLI package.
+///
+/// Handles two cases:
+///   1. Running from source (dart run bin/spl.dart) — bricks are two levels up
+///      from the script file.
+///   2. Globally activated snapshot — navigates from the snapshot path to the
+///      global_packages dir, then reads package_config.json to find the source.
+Directory? _findCliBricksDir() {
+  try {
+    final scriptPath = Platform.script.toFilePath();
+    final pkgRootCandidate = File(scriptPath).parent.parent;
+
+    // Case 1: source run — bricks/ sits directly in the package root
+    final directBricks = Directory('${pkgRootCandidate.path}/bricks');
+    if (directBricks.existsSync()) return directBricks;
+
+    // Case 2: globally activated snapshot
+    final configFile = File(
+        '${pkgRootCandidate.path}/.dart_tool/package_config.json');
+    if (!configFile.existsSync()) return null;
+
+    final config =
+        jsonDecode(configFile.readAsStringSync()) as Map<String, dynamic>;
+    final packages = config['packages'] as List<dynamic>;
+    for (final pkg in packages) {
+      final map = pkg as Map<String, dynamic>;
+      if (map['name'] == 'flutter_spl_manager') {
+        final rootUri = map['rootUri'] as String;
+        final sourceRoot = Uri.parse(rootUri).toFilePath();
+        final bricksDir = Directory('$sourceRoot/bricks');
+        if (bricksDir.existsSync()) return bricksDir;
+        break;
+      }
+    }
+  } catch (_) {}
+  return null;
+}
+
+void _copyDirectory(Directory source, Directory target) {
+  target.createSync(recursive: true);
+  for (final entity in source.listSync()) {
+    final name = entity.uri.pathSegments
+        .lastWhere((s) => s.isNotEmpty, orElse: () => '');
+    if (name.isEmpty) continue;
+    if (entity is File) {
+      entity.copySync('${target.path}/$name');
+    } else if (entity is Directory) {
+      _copyDirectory(entity, Directory('${target.path}/$name'));
+    }
+  }
+}
 
 Future<void> _cmdMasonInit() async {
   _printHeader('Setting up Mason bricks');
@@ -216,11 +254,28 @@ Future<void> _cmdMasonInit() async {
     return;
   }
 
+  // Locate CLI bricks
+  final cliBricksDir = _findCliBricksDir();
+  if (cliBricksDir == null) {
+    print('  ⚠  Could not locate bundled bricks. Please report this issue.');
+    return;
+  }
+
+  // Copy bricks into the project
+  final projectBricks = Directory('bricks');
+  if (projectBricks.existsSync()) {
+    print('  ~  bricks/  (already exists, skipping copy)');
+  } else {
+    _copyDirectory(cliBricksDir, projectBricks);
+    print('  +  bricks/  (copied — edit these templates freely)');
+  }
+
+  // Write mason.yaml with local path references
   const masonYamlPath = 'mason.yaml';
   if (File(masonYamlPath).existsSync()) {
     print('  ~  mason.yaml  (already exists, skipping)');
   } else {
-    File(masonYamlPath).writeAsStringSync(_masonYaml);
+    File(masonYamlPath).writeAsStringSync(_masonYamlLocal);
     print('  +  mason.yaml');
   }
 
@@ -232,6 +287,7 @@ Future<void> _cmdMasonInit() async {
     return;
   }
   print('  ✓  Mason bricks ready. spl add will now use them automatically.');
+  print('  ✓  Edit bricks/ templates to customise generated code for your team.');
 }
 
 Future<bool> _tryMasonFeature(String module,

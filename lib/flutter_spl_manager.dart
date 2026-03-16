@@ -17,6 +17,7 @@
 ///   spl fix
 library;
 
+import 'dart:convert';
 import 'dart:io';
 
 part 'src/commands.dart';
