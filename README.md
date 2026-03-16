@@ -100,7 +100,7 @@ dependencies:
   # spl storage add hive
   hive_flutter: ^1.1.0
 
-  # spl storage add shared_preferences
+  # spl storage add shared_preferences / shared_preferences_with_cache
   shared_preferences: ^2.3.0
 
   # spl add <name> --state riverpod
@@ -125,6 +125,9 @@ Run once in any Flutter project to bootstrap the SPL structure:
 ```bash
 cd my_flutter_project
 spl init
+
+# Optional: set up Mason bricks for code generation (requires mason_cli)
+spl init --with-mason
 ```
 
 This creates:
@@ -147,7 +150,7 @@ spl add orders,storage=sqflite,state=cubit,test
 ## Commands
 
 ```
-spl init
+spl init [--with-mason]
 spl list
 spl add <spec> [spec2 ...]
 spl disable <name> [name2 ...]
@@ -300,7 +303,8 @@ If other features import the target, the CLI **blocks** and lists the dependent 
 | `flutter_secure_storage` | Default. Encrypted key-value. No `init()` needed. |
 | `sqflite` | SQLite (relational). Best for structured/queryable data. Requires `init()` before `runApp()`. |
 | `hive` | Fast binary box store. Requires `hive_flutter` in `pubspec.yaml` and `init()` before `runApp()`. |
-| `shared_preferences` | Simple unencrypted key-value. Requires `shared_preferences` in `pubspec.yaml` and `init()` before `runApp()`. |
+| `shared_preferences` | Simple unencrypted key-value. Uses `SharedPreferencesAsync`. Requires `shared_preferences: ^2.3.0` and `init()` before `runApp()`. |
+| `shared_preferences_with_cache` | Simple unencrypted key-value with in-memory read cache. Uses `SharedPreferencesWithCache`. Best for frequently read settings. Requires `shared_preferences: ^2.3.0` and `init()` before `runApp()`. |
 
 ```bash
 spl storage add sqflite          # register a new backend
@@ -381,12 +385,19 @@ features:
 
 The CLI uses [Mason](https://pub.dev/packages/mason_cli) for code generation if available, and falls back to its own inline templates automatically. No setup required to use the CLI — Mason is purely an optional enhancement.
 
-If your project has bricks set up:
+To set up Mason bricks in your project:
 
 ```bash
-mason get          # run once
-spl add orders     # Mason brick used automatically if found
+# Install mason_cli if you haven't already
+dart pub global activate mason_cli
+
+# Bootstrap Mason with all SPL bricks (run alongside spl init, or separately)
+spl init --with-mason
 ```
+
+This creates a `mason.yaml` referencing all SPL bricks from this repo's GitHub, then runs `mason get` to resolve them. After that, `spl add` and `spl storage add` will use Mason bricks automatically.
+
+If you want to customise a brick, point its entry in `mason.yaml` to a local path instead of the git URL, then run `mason get` again.
 
 Brick templates live in `bricks/` and are excluded from Dart analysis because they contain Mustache syntax (`{{name.pascalCase()}}`), not valid Dart.
 

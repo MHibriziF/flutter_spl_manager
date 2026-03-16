@@ -1,16 +1,19 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import '../app_storage.dart';
 
-/// [AppStorage] backed by SharedPreferencesAsync (non-encrypted key-value).
+/// [AppStorage] backed by SharedPreferencesWithCache (non-encrypted key-value).
+/// Reads are served from an in-memory cache; writes go through to disk.
 /// Managed by spl_manager. To switch: spl storage default <provider>
 /// Requires: shared_preferences: ^2.3.0 in pubspec.yaml
 /// Call di<AppStorage>().init() in main() before runApp().
-class SharedPrefsStorageProvider implements AppStorage {
-  late SharedPreferencesAsync _prefs;
+class SharedPrefsWithCacheStorageProvider implements AppStorage {
+  late SharedPreferencesWithCache _prefs;
 
   @override
   Future<void> init() async {
-    _prefs = SharedPreferencesAsync();
+    _prefs = await SharedPreferencesWithCache.create(
+      cacheOptions: const SharedPreferencesWithCacheOptions(),
+    );
   }
 
   @override

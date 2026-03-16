@@ -199,6 +199,10 @@ bricks:
     git:
       url: $_repoUrl
       path: bricks/storage_sqflite
+  storage_prefs_with_cache:
+    git:
+      url: $_repoUrl
+      path: bricks/storage_prefs_with_cache
 ''';
 
 Future<void> _cmdMasonInit() async {
@@ -254,11 +258,12 @@ Future<bool> _tryMasonFeature(String module,
 Future<bool> _tryMasonStorage(String provider) async {
   if (!await _checkMason()) return false;
   final brick = switch (provider) {
-    'flutter_secure_storage' => 'storage_secure',
-    'sqflite'                => 'storage_sqflite',
-    'hive'                   => 'storage_hive',
-    'shared_preferences'     => 'storage_prefs',
-    _                        => null,
+    'flutter_secure_storage'     => 'storage_secure',
+    'sqflite'                    => 'storage_sqflite',
+    'hive'                       => 'storage_hive',
+    'shared_preferences'         => 'storage_prefs',
+    'shared_preferences_with_cache' => 'storage_prefs_with_cache',
+    _                            => null,
   };
   if (brick == null) return false;
   print('  Using Mason brick: $brick');

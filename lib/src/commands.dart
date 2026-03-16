@@ -422,10 +422,11 @@ void _cmdStorageList() {
   final features = config['features'] as List<Map<String, String>>? ?? [];
 
   final descriptions = {
-    'flutter_secure_storage': 'Encrypted key-value. Strings only. Best for sensitive data.',
-    'sqflite':                'SQLite (relational). Best for structured/queryable data.',
-    'hive':                   'NoSQL box store. Fast reads. Best for object graphs.',
-    'shared_preferences':     'Simple key-value. Non-encrypted. Best for user settings.',
+    'flutter_secure_storage':     'Encrypted key-value. Strings only. Best for sensitive data.',
+    'sqflite':                    'SQLite (relational). Best for structured/queryable data.',
+    'hive':                       'NoSQL box store. Fast reads. Best for object graphs.',
+    'shared_preferences':         'Simple key-value. Non-encrypted. Uses SharedPreferencesAsync. Best for user settings.',
+    'shared_preferences_with_cache': 'Simple key-value. Non-encrypted. Uses SharedPreferencesWithCache (reads from memory). Best for frequently read settings.',
   };
 
   for (final entry in descriptions.entries) {

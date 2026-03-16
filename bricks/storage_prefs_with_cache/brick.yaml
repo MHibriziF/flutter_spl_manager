@@ -1,0 +1,6 @@
+name: storage_prefs_with_cache
+description: Generates the SharedPreferencesWithCache AppStorage provider (requires shared_preferences: ^2.3.0 in pubspec)
+version: 0.1.0+1
+environment:
+  mason: ">=0.1.0 <0.2.0"
+vars: {}

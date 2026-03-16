@@ -86,6 +86,11 @@ void _printStorageNotes(String provider) {
       print('  ⚠  Call di<AppStorage>().init() in main() before runApp()');
     case 'shared_preferences':
       print('\n  ⚠  Add: shared_preferences: ^2.3.0 to pubspec.yaml');
+      print('  ⚠  Uses SharedPreferencesAsync (non-deprecated async API)');
+      print('  ⚠  Call di<AppStorage>().init() in main() before runApp()');
+    case 'shared_preferences_with_cache':
+      print('\n  ⚠  Add: shared_preferences: ^2.3.0 to pubspec.yaml');
+      print('  ⚠  Uses SharedPreferencesWithCache — reads served from memory cache');
       print('  ⚠  Call di<AppStorage>().init() in main() before runApp()');
     case 'sqflite':
       print('\n  ⚠  Call di<AppStorage>().init() in main() before runApp()');
@@ -197,7 +202,7 @@ Commands:
       --shell-route               Shell route for all
       --state bloc|cubit|riverpod State mgmt for all
 
-    Available providers: flutter_secure_storage | sqflite | hive | shared_preferences
+    Available providers: flutter_secure_storage | sqflite | hive | shared_preferences | shared_preferences_with_cache
 
   disable <name> [name2 ...]             Move to catalog — code kept, DI removed
   enable <name> [name2 ...]              Restore from catalog — DI re-wired

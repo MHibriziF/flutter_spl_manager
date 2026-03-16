@@ -8,6 +8,7 @@ const _validProviders = [
   'sqflite',
   'hive',
   'shared_preferences',
+  'shared_preferences_with_cache',
 ];
 
 void _validateStorageProvider(String provider) {
@@ -32,11 +33,12 @@ List<String> _getActiveProviders() {
 }
 
 String _implFileName(String provider) => switch (provider) {
-  'flutter_secure_storage' => 'secure_storage_provider.dart',
-  'sqflite'                => 'sqflite_storage_provider.dart',
-  'hive'                   => 'hive_storage_provider.dart',
-  'shared_preferences'     => 'shared_prefs_storage_provider.dart',
-  _                        => _die('Unknown provider: $provider'),
+  'flutter_secure_storage'     => 'secure_storage_provider.dart',
+  'sqflite'                    => 'sqflite_storage_provider.dart',
+  'hive'                       => 'hive_storage_provider.dart',
+  'shared_preferences'         => 'shared_prefs_storage_provider.dart',
+  'shared_preferences_with_cache' => 'shared_prefs_with_cache_storage_provider.dart',
+  _                            => _die('Unknown provider: $provider'),
 };
 
 String _implFilePath(String p) => 'lib/core/storage/impl/${_implFileName(p)}';
@@ -56,11 +58,12 @@ void _generateStorageImpl(String provider) {
 }
 
 String _storageImplContent(String provider) => switch (provider) {
-  'flutter_secure_storage' => _tplSecureStorageProvider(),
-  'sqflite'                => _tplSqfliteProvider(),
-  'hive'                   => _tplHiveProvider(),
-  'shared_preferences'     => _tplSharedPrefsProvider(),
-  _                        => _die('Unknown provider: $provider'),
+  'flutter_secure_storage'     => _tplSecureStorageProvider(),
+  'sqflite'                    => _tplSqfliteProvider(),
+  'hive'                       => _tplHiveProvider(),
+  'shared_preferences'         => _tplSharedPrefsProvider(),
+  'shared_preferences_with_cache' => _tplSharedPrefsWithCacheProvider(),
+  _                            => _die('Unknown provider: $provider'),
 };
 
 /// Ensures [provider] is in the active list and has an impl file.
@@ -82,19 +85,21 @@ Future<void> _ensureStorageActive(String provider) async {
 }
 
 String _getterName(String provider) => switch (provider) {
-  'flutter_secure_storage' => 'flutterSecureStorage',
-  'sqflite'                => 'sqflite',
-  'hive'                   => 'hive',
-  'shared_preferences'     => 'sharedPreferences',
-  _                        => _die('Unknown provider: $provider'),
+  'flutter_secure_storage'     => 'flutterSecureStorage',
+  'sqflite'                    => 'sqflite',
+  'hive'                       => 'hive',
+  'shared_preferences'         => 'sharedPreferences',
+  'shared_preferences_with_cache' => 'sharedPreferencesWithCache',
+  _                            => _die('Unknown provider: $provider'),
 };
 
 String _providerConstructor(String provider) => switch (provider) {
-  'flutter_secure_storage' => 'const SecureStorageProvider(FlutterSecureStorage())',
-  'sqflite'                => 'SqfliteStorageProvider()',
-  'hive'                   => 'HiveStorageProvider()',
-  'shared_preferences'     => 'SharedPrefsStorageProvider()',
-  _                        => _die('Unknown provider: $provider'),
+  'flutter_secure_storage'     => 'const SecureStorageProvider(FlutterSecureStorage())',
+  'sqflite'                    => 'SqfliteStorageProvider()',
+  'hive'                       => 'HiveStorageProvider()',
+  'shared_preferences'         => 'SharedPrefsStorageProvider()',
+  'shared_preferences_with_cache' => 'SharedPrefsWithCacheStorageProvider()',
+  _                            => _die('Unknown provider: $provider'),
 };
 
 void _rewriteStorageModule(List<String> providers, String defaultProvider) {
@@ -109,6 +114,8 @@ void _rewriteStorageModule(List<String> providers, String defaultProvider) {
     importLines.add("import 'impl/hive_storage_provider.dart';");
   if (providers.contains('shared_preferences'))
     importLines.add("import 'impl/shared_prefs_storage_provider.dart';");
+  if (providers.contains('shared_preferences_with_cache'))
+    importLines.add("import 'impl/shared_prefs_with_cache_storage_provider.dart';");
 
   final getters = providers.map((p) =>
     "  @lazySingleton\n"
