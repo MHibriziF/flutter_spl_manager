@@ -1,0 +1,6 @@
+name: storage_sqflite
+description: Generates the sqflite AppStorage provider
+version: 0.1.0+1
+environment:
+  mason: ">=0.1.0 <0.2.0"
+vars: {}

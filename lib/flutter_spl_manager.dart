@@ -33,7 +33,7 @@ Future<void> splMain(List<String> args) async {
 
   switch (args[0]) {
     case 'init':
-      await _cmdInit();
+      await _cmdInit(withMason: args.contains('--with-mason'));
 
     case 'list':
       await _cmdList();

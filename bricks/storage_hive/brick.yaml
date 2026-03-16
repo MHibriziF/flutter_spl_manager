@@ -1,0 +1,6 @@
+name: storage_hive
+description: Generates the Hive AppStorage provider (requires hive_flutter in pubspec)
+version: 0.1.0+1
+environment:
+  mason: ">=0.1.0 <0.2.0"
+vars: {}

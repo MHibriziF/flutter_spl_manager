@@ -1,0 +1,6 @@
+name: storage_prefs
+description: Generates the SharedPreferences AppStorage provider (requires shared_preferences in pubspec)
+version: 0.1.0+1
+environment:
+  mason: ">=0.1.0 <0.2.0"
+vars: {}

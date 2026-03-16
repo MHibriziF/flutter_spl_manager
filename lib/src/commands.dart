@@ -3,7 +3,7 @@ part of '../flutter_spl_manager.dart';
 
 // ─── Commands ─────────────────────────────────────────────────────────────────
 
-Future<void> _cmdInit() async {
+Future<void> _cmdInit({bool withMason = false}) async {
   _printHeader('Initializing SPL');
 
   if (!File('pubspec.yaml').existsSync()) {
@@ -53,6 +53,8 @@ Future<void> _cmdInit() async {
 
   // analysis_options.yaml
   _ensureAnalysisExclusions();
+
+  if (withMason) await _cmdMasonInit();
 
   print('');
   print('  ✓ Done! Project initialized for SPL.');

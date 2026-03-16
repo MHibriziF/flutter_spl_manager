@@ -1,0 +1,15 @@
+name: feature
+description: Scaffolds a clean architecture feature module with injectable DI
+version: 0.1.0+1
+environment:
+  mason: ">=0.1.0 <0.2.0"
+vars:
+  name:
+    type: string
+    description: Feature name (snake_case, e.g. orders or user_profile)
+    prompt: "Feature name (snake_case)"
+  with_storage:
+    type: boolean
+    description: Include AppStorage-backed local data cache?
+    default: false
+    prompt: "Include local storage cache?"

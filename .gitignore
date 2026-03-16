@@ -47,3 +47,6 @@ build/
 
 # Coverage
 coverage/
+
+# AI assistants
+.claude

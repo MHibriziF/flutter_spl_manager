@@ -173,6 +173,63 @@ Future<bool> _checkMason() async {
   return _masonAvailable!;
 }
 
+// ─── Mason init ───────────────────────────────────────────────────────────────
+
+const _repoUrl = 'https://github.com/MHibriziF/flutter_spl_manager';
+
+const _masonYaml = '''
+bricks:
+  feature:
+    git:
+      url: $_repoUrl
+      path: bricks/feature
+  storage_hive:
+    git:
+      url: $_repoUrl
+      path: bricks/storage_hive
+  storage_prefs:
+    git:
+      url: $_repoUrl
+      path: bricks/storage_prefs
+  storage_secure:
+    git:
+      url: $_repoUrl
+      path: bricks/storage_secure
+  storage_sqflite:
+    git:
+      url: $_repoUrl
+      path: bricks/storage_sqflite
+''';
+
+Future<void> _cmdMasonInit() async {
+  _printHeader('Setting up Mason bricks');
+
+  // Check mason is installed
+  final check = await Process.run('mason', ['--version'], runInShell: true);
+  if (check.exitCode != 0) {
+    print('  ⚠  Mason not found. Install it first:');
+    print('     dart pub global activate mason_cli');
+    return;
+  }
+
+  const masonYamlPath = 'mason.yaml';
+  if (File(masonYamlPath).existsSync()) {
+    print('  ~  mason.yaml  (already exists, skipping)');
+  } else {
+    File(masonYamlPath).writeAsStringSync(_masonYaml);
+    print('  +  mason.yaml');
+  }
+
+  print('  Running mason get...');
+  final result = await Process.run('mason', ['get'], runInShell: true);
+  if (result.exitCode != 0) {
+    print(result.stderr);
+    print('  ⚠  mason get failed. Run `mason get` manually after checking mason.yaml.');
+    return;
+  }
+  print('  ✓  Mason bricks ready. spl add will now use them automatically.');
+}
+
 Future<bool> _tryMasonFeature(String module,
     {bool withStorage = false, String state = 'bloc'}) async {
   if (!await _checkMason()) return false;

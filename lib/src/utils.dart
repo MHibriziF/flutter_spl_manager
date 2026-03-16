@@ -173,6 +173,7 @@ SPL Manager — Software Product Line CLI for Flutter Clean Architecture
 
 Setup (run once per project):
   spl init                              Bootstrap spl.yaml, AppStorage, catalog dir
+  spl init --with-mason                 Also set up Mason bricks (requires mason_cli)
 
 Variability:
   Storage [OR]      multiple backends can coexist; each feature picks one

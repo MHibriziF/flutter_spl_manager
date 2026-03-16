@@ -12,7 +12,40 @@ Handles the full feature lifecycle — create, disable, re-enable, delete — an
 dart pub global activate --source git https://github.com/MHibriziF/flutter_spl_manager
 ```
 
-Make sure the Dart global bin directory is on your `PATH`. Dart will tell you the path when you activate — it looks like `~/.pub-cache/bin` on macOS/Linux or `%LOCALAPPDATA%\Pub\Cache\bin` on Windows.
+Make sure the Dart global bin directory is on your `PATH`:
+
+| Platform | Path |
+|---|---|
+| macOS / Linux | `~/.pub-cache/bin` |
+| Windows | `%LOCALAPPDATA%\Pub\Cache\bin` |
+
+Dart will print the path when you activate if it's not already set.
+
+### macOS / Linux
+
+Works out of the box in any bash/zsh terminal after adding the path above to your shell profile.
+
+### Windows — PowerShell or CMD
+
+Works out of the box:
+
+```powershell
+spl init
+```
+
+### Windows — Git Bash
+
+Dart creates a `spl.bat` on Windows, which Git Bash does not run automatically. Add this alias to your `~/.bashrc`:
+
+```bash
+alias spl='spl.bat'
+```
+
+Then reload:
+
+```bash
+source ~/.bashrc
+```
 
 ---
 
